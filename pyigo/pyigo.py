@@ -16,9 +16,8 @@ def optimize(fn, intervals, deriv1=None, deriv2=None):
             split2 = [interval([inter.midpoint, inter[0][1]]) for inter in intervals[0]]
             split = zip(split1, split2)
             products = list(itertools.product(*split))
+            products = filter(lambda inter: best[0][0] >= fn(inter)[0], products)
             if deriv1 is not None:
-                products = filter(lambda inter: best[0][0] >= fn(inter)[0], products)
-            if deriv2 is not None:
                 products = filter(lambda inter: all(interval([0.0]) in inter2 for inter2 in deriv1(inter)), products)
             intervals = intervals[1:] + products
             print iteration
