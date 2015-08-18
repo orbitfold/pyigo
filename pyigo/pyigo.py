@@ -2,9 +2,10 @@ import numpy as np
 from interval import interval, imath
 import itertools
 
-def optimize(fn, intervals, deriv1=None, deriv2=None):
+def solve(fn, intervals, deriv1=None, deriv2=None, verbose=True):
     best = [None]
     best_x = [None]
+    intervals = [[interval(inter) for inter in intervals]]
     def optimizer(intervals, iterations):
         for iteration in range(iterations):
             mid = [inter.midpoint for inter in intervals[0]]
@@ -20,10 +21,11 @@ def optimize(fn, intervals, deriv1=None, deriv2=None):
             if deriv1 is not None:
                 products = filter(lambda inter: all(interval([0.0]) in inter2 for inter2 in deriv1(inter)), products)
             intervals = intervals[1:] + products
-            print iteration
-            print len(intervals)
-            print best
-            print best_x
+            if verbose:
+                print iteration
+                print len(intervals)
+                print best
+                print best_x
     optimizer(intervals, 500000)
     return best_x
 

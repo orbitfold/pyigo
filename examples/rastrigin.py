@@ -1,9 +1,13 @@
-from pyigo.pyigo import optimize
+from pyigo.pyigo import solve
 from interval.imath import *
 from interval import interval
 
-def rastrigin(xs, offsets):
-    return 10.0 * len(xs) + sum([x ** 2 - 10.0 * cos(2.0 * pi * x) for x in xs])
+offsets = [2.25, 3.00, -0.20, -2.00, -3.55, -1.59, -1.67, 0.77, 2.97, 2.07]
+
+def rastrigin(args):
+    return 10.0 * len(args) +\
+        sum([(x - off) ** 2 - 10.0 * cos(2.0 * pi * (x - off)) 
+             for x, off in zip(args, offsets)])
 
 if __name__ == '__main__':
-    optimize(rastrigin, [[interval([-5.12, 5.12])] * 10])
+    solve(rastrigin, [[-5.12, 5.12]] * 4)
