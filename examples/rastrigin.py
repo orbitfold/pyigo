@@ -14,4 +14,4 @@ def rastrigin_deriv1(args):
             for x, off in zip(args, offsets)]
 
 if __name__ == '__main__':
-    solve(rastrigin, [[-5.12, 5.12]] * 3, 0.01)
+    solve(rastrigin, [[-5.12, 5.12]] * 5, 0.0001, deriv1=rastrigin_deriv1)
