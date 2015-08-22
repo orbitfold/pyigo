@@ -10,8 +10,12 @@ def rastrigin(args):
              for x, off in zip(args, offsets)])
 
 def rastrigin_deriv1(args):
-    return [2.0 * (x - off) + 10.0 * 2.0 * pi * sin(2.0 * pi * (x - off))
+    return [2.0 * (x - off) + 20.0 * pi * sin(2.0 * pi * (x - off))
+            for x, off in zip(args, offsets)]
+
+def rastrigin_deriv2(args):
+    return [2.0 + 40.0 * pi ** 2 * cos(2.0 * pi * (x - off))
             for x, off in zip(args, offsets)]
 
 if __name__ == '__main__':
-    solve(rastrigin, [[-5.12, 5.12]] * 5, 0.0001, deriv1=rastrigin_deriv1)
+    solve(rastrigin, [[-5.12, 5.12]] * 5, 0.0001, deriv1=rastrigin_deriv1, deriv2=rastrigin_deriv2)

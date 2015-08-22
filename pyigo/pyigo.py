@@ -38,6 +38,7 @@ def midpoint_test(fn_y, best_y):
     """
     return best_y < fn_y
 
+
 def monotonicity_test(d1_y):
     """Test if any of the coordinates is strictly monotonous within the given interval.
     
@@ -50,6 +51,20 @@ def monotonicity_test(d1_y):
     False if we should bisect the box, True if we should discard it
     """
     return not all([0.0 in inter for inter in d1_y])
+
+
+def nonconvexity_test(d2_y):
+    """Test if any of the coordinates is non-convex within the given interval
+
+    Arguments:
+    ----------
+    d2_y (list of intervals) -- the diagonal of the Hessian matrix
+
+    Return:
+    -------
+    False if we should bisect the box, True if we should discard it
+    """
+    return any([inter < 0.0 for inter in d2_y])
     
 
 def solve(fn, intervals, precision, deriv1=None, deriv2=None, verbose=True):
@@ -82,10 +97,9 @@ def solve(fn, intervals, precision, deriv1=None, deriv2=None, verbose=True):
             if best[0] is None or mid_y < best[0]:
                 best[0] = mid_y
                 best_x[0] = mid
-            y = fn(intervals[0])
-            d1y = deriv1(intervals[0])
-            if (midpoint_test(y, best[0]) or
-                monotonicity_test(d1y)):
+            if (midpoint_test(fn(intervals[0]), best[0]) or
+                (deriv1 is not None and monotonicity_test(deriv1(intervals[0]))) or
+                (deriv2 is not None and nonconvexity_test(deriv2(intervals[0])))):
                 intervals = intervals[1:]
             else:
                 intervals = intervals[1:] + bisect_simple(intervals[0])
