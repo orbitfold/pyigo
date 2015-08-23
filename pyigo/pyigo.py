@@ -65,7 +65,7 @@ def nonconvexity_test(d2_y):
     False if we should bisect the box, True if we should discard it
     """
     return any([inter < 0.0 for inter in d2_y])
-    
+
 
 def solve(fn, intervals, precision, deriv1=None, deriv2=None, verbose=True):
     """Find the global optimum of a problem using interval arithmetic.
@@ -88,6 +88,7 @@ def solve(fn, intervals, precision, deriv1=None, deriv2=None, verbose=True):
     intervals = [[interval(inter) for inter in intervals]]
     def optimizer(intervals):
         iteration = 0
+        dropped = 0
         # Stop when the largest interval is smaller than the specified precision
         while not max([inter[0][1] - inter[0][0] for inter in intervals[0]]) < precision:
             iteration += 1
@@ -101,13 +102,13 @@ def solve(fn, intervals, precision, deriv1=None, deriv2=None, verbose=True):
                 (deriv1 is not None and monotonicity_test(deriv1(intervals[0]))) or
                 (deriv2 is not None and nonconvexity_test(deriv2(intervals[0])))):
                 intervals = intervals[1:]
+                dropped += 1
             else:
                 intervals = intervals[1:] + bisect_simple(intervals[0])
             if verbose:
-                print "iteration:", iteration
-                print "intervals to analyze:", len(intervals)
-                print "best value:", best
-                print "best solution:", best_x
+                print "intervals: analyzed=%s dropped=%s left=%s" % (iteration, dropped, len(intervals))
+                print "best value:", best[0][0][0]
+                print "best solution:", [x[0][0] for x in best_x[0]]
                 print
     optimizer(intervals)
     return best_x
